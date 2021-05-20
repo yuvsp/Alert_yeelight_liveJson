@@ -30,12 +30,12 @@ def myPeriodicFunction():
     if awake > 200:
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
-        print("Listening to Alerts. Current Time =", current_time)
+        print("[Listening to Alerts in background] Current Time =", current_time)
         awake = 0
 
     if b != "":
         df = pd.read_json(b)
-        message = (df.loc[df['data'].str.contains('רמת גן|גבעתיים|תל אביב|א|ה|ו|י')])
+        message = (df.loc[df['data'].str.contains('רמת גן|גבעתיים|תל אביב')])
 
         if not message.empty:
             now = datetime.now()
@@ -104,9 +104,23 @@ for x in bulbList:
     ip = x.get('ip') + ''
     bulbIPs += [ip]
 if bulbIPs:
-    print("Bulbs list: ")
+    print("Total", len(bulbIPs), "Bulbs found. IPs list: ")
     print(bulbIPs)
     startAlertListener()
 else:
-    print("No local Bulbs found ------- EXITING")
+    print("No local Bulbs found, init SEARCHING....")
+    from yeelight import discover_bulbs
+    bulbList = discover_bulbs()
+    bulbIPs = []
+    for x in bulbList:
+        ip = x.get('ip') + ''
+        bulbIPs += [ip]
+    if bulbIPs:
+        print("Bulbs list: ")
+        print(bulbIPs)
+        startAlertListener()
+    else:
+        print("Still no local Bulbs found ------- EXITING")
+
+
 
